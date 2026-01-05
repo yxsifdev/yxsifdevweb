@@ -1,0 +1,48 @@
+<div
+  id="index-container"
+  hidden
+  class="fixed hidden p-4 border bg-neutral-950 border-neutral-900 rounded-l-2xl right-0 top-1/2 -translate-y-1/2 max-h-[60vh] overflow-hidden 2xl:flex flex-col w-64"
+>
+  <ul id="index-list" class="flex-1 overflow-y-auto"></ul>
+</div>
+
+<style>
+  #index-list::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  #index-list::-webkit-scrollbar-thumb {
+    background-color: #262626;
+    border-radius: 3px;
+  }
+</style>
+
+<script>
+  function initMarkdownIndex() {
+    const article = document.getElementById(
+      "article-content"
+    ) as HTMLDivElement;
+    const indexContainer = document.getElementById(
+      "index-container"
+    ) as HTMLDivElement;
+    const indexList = document.getElementById("index-list") as HTMLUListElement;
+    if (!article) return;
+
+    const headings = Array.from(article.querySelectorAll("h2, h3"));
+    headings.forEach((heading) => {
+      const li = document.createElement("li");
+      li.className =
+        heading.tagName === "H2"
+          ? "mb-2 font-medium text-white"
+          : "ml-4 mb-1 text-neutral-400 hover:text-white";
+      const a = document.createElement("a");
+      a.href = `#${heading.id}`;
+      a.className = "text-sm pr-2 flex";
+      a.textContent = heading.textContent || "";
+      li.appendChild(a);
+      indexList.appendChild(li);
+      indexContainer.hidden = false;
+    });
+  }
+  document.addEventListener("astro:page-load", initMarkdownIndex);
+</script>

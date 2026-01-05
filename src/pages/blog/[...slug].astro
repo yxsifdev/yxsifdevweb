@@ -1,0 +1,51 @@
+---
+import MarkdownIndex from "@/components/MarkdownIndex.astro";
+import Arrow from "@/icons/Arrow.astro";
+import Layout from "@/layouts/Layout.astro";
+import { render } from "astro:content";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const options: Intl.DateTimeFormatOptions = {
+  timeZone: "UTC",
+  day: "2-digit",
+  month: "long",
+  year: "numeric",
+};
+---
+
+<Layout title={post.data.title}>
+  <article class="mx-auto lg:max-w-6xl">
+    <header
+      class="relative flex flex-col items-center justify-center mx-auto my-5 mb-16 text-center lg:max-w-4xl sm:max-w-xl gap-y-8"
+    >
+      <a
+        href="/blog"
+        class="absolute top-0 left-0 flex items-center text-sm text-neutral-400 gap-x-2 hover:underline"
+      >
+        <Arrow class="rotate-180 size-4" />
+        Blog
+      </a>
+      <span class="text-sm text-white">
+        <time datetime={new Date(post.data.pubDate).toISOString()}>
+          {new Date(post.data.pubDate).toLocaleDateString("es-ES", options)}
+        </time>
+      </span>
+      <h1 class="text-4xl font-medium lg:text-6xl">{post.data.title}</h1>
+    </header>
+    <div class="md-container" id="article-content">
+      <Content />
+    </div>
+    <MarkdownIndex />
+  </article>
+</Layout>
