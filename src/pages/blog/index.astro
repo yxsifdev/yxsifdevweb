@@ -1,0 +1,41 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+const posts = (await getCollection("blog")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const options: Intl.DateTimeFormatOptions = {
+  timeZone: "UTC",
+  day: "2-digit",
+  month: "short",
+  year: "numeric",
+};
+---
+
+<Layout>
+  <h1 class="mb-4 text-5xl font-medium">Blog</h1>
+  <ul
+    class="grid gap-x-5 gap-y-10 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+  >
+    {
+      posts.map(({ slug, data: { title, pubDate } }) => (
+        <li>
+          <article class="h-full">
+            <a href={`/blog/${slug}`} class="flex flex-col h-full gap-y-2">
+              <div class="w-full rounded-md h-60 bg-linear-to-tl from-purple-400 via-pink-500 to-red-500" />
+              <h2>{title}</h2>
+              <time
+                datetime={pubDate.toISOString()}
+                class="text-sm text-neutral-500 text-nowrap"
+              >
+                {pubDate.toLocaleDateString("es-ES", options)}
+              </time>
+            </a>
+          </article>
+        </li>
+      ))
+    }
+  </ul>
+</Layout>

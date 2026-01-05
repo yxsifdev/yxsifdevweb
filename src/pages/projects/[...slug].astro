@@ -1,0 +1,81 @@
+---
+import MarkdownIndex from "@/components/MarkdownIndex.astro";
+import Arrow from "@/icons/Arrow.astro";
+import Layout from "@/layouts/Layout.astro";
+import { render } from "astro:content";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const projects = await getCollection("projects");
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+
+const options: Intl.DateTimeFormatOptions = {
+  timeZone: "UTC",
+  day: "2-digit",
+  month: "long",
+  year: "numeric",
+};
+---
+
+<Layout title={project.data.title}>
+  <article class="pb-4 mx-auto lg:max-w-6xl">
+    <header
+      class="relative flex flex-col items-center justify-center mx-auto my-5 mb-16 text-center lg:max-w-4xl sm:max-w-xl gap-y-8"
+    >
+      <a
+        href="/projects"
+        class="absolute top-0 left-0 flex items-center text-sm text-neutral-400 gap-x-2 hover:underline"
+      >
+        <Arrow class="rotate-180 size-4" />
+        Proyectos
+      </a>
+      <div class="flex items-center justify-center text-sm">
+        <span class="text-neutral-400">{project.data.category}</span>
+        <div class="w-px h-2 mx-2 bg-neutral-500"></div>
+        <time datetime={project.data.pubDate.toISOString()}>
+          {project.data.pubDate.toLocaleDateString("es-ES", options)}
+        </time>
+      </div>
+      <div class="space-y-2">
+        <h1 class="text-4xl font-medium lg:text-6xl">{project.data.title}</h1>
+        <p class="text-neutral-400">{project.data.description}</p>
+      </div>
+    </header>
+    <div class="md-container" id="article-content">
+      <Content />
+    </div>
+    {
+      project.data.collaborators && project.data.collaborators.length > 0 && (
+        <footer class="pb-4">
+          <h2 class="mb-4 font-mono text-2xl font-medium text-center text-black bg-white">
+            Colaboradores
+          </h2>
+          <div class="flex items-center justify-center -space-x-3">
+            {project.data.collaborators.map((co) => (
+              <a
+                href={`https://github.com/${co.name}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src={`https://github.com/${co.name}.png`}
+                  alt={`Collaborator ${co.name}`}
+                  class="rounded-full size-14"
+                  title={co.name}
+                />
+              </a>
+            ))}
+          </div>
+        </footer>
+      )
+    }
+    <MarkdownIndex />
+  </article>
+</Layout>

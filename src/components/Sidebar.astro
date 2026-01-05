@@ -1,0 +1,61 @@
+---
+const LINKS = [
+  { href: "/", text: "Inicio" },
+  { href: "/projects", text: "Proyectos" },
+  { href: "/blog", text: "Blog" },
+];
+---
+
+<div class="fixed top-0 left-0 hidden h-screen w-50 lg:block">
+  <nav
+    id="nav-animation"
+    class="absolute top-0 mt-[180px] hidden w-full md:block px-5 animate-fade-in-left"
+    transition:persist="navbar"
+  >
+    <ul class="space-y-0.5">
+      {
+        LINKS.map(({ href, text }) => (
+          <li>
+            <a
+              href={href}
+              class="flex py-2 text-sm font-medium rounded-md ps-3 pe-5 hover:bg-neutral-900"
+              draggable="false"
+            >
+              {text}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const nav = document.getElementById("nav-animation") as HTMLElement;
+    if (!nav) return;
+
+    nav.addEventListener(
+      "animationend",
+      () => nav.classList.remove("animate-fade-in-left"),
+      { once: true }
+    );
+  });
+</script>
+
+<style>
+  .animate-fade-in-left {
+    animation: fade-in-left 0.5s ease-in-out forwards;
+  }
+
+  @keyframes fade-in-left {
+    0% {
+      opacity: 0;
+      transform: translateX(-50px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+</style>

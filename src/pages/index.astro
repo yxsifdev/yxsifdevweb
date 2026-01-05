@@ -1,11 +1,42 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import Layout from "@/layouts/Layout.astro";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const LINKS = [
+  {
+    label: "Comunidad de yxsifdev",
+    href: "https://discord.gg/yxsifdev",
+    external: true,
+  },
+  { label: "Todos mis proyectos", href: "/projects" },
+  { label: "Mi ruta de aprendizaje", href: "/learning-path" },
+  { label: "Más de mí", href: "/about" },
+];
 ---
 
 <Layout>
-	<Welcome />
+  <div
+    class="flex flex-col items-center justify-center lg:min-h-[calc(100vh-50px)] rounded-3xl py-10 gap-y-5 @container"
+  >
+    <h1 class="font-mono text-4xl font-bold lg:py-0 md:text-6xl lg:text-9xl">
+      yxsifdev
+    </h1>
+    <ul
+      class="flex flex-wrap items-center justify-center gap-2 w-full @sm:max-w-[545px]"
+    >
+      {
+        LINKS.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              target={link.external ? "_blank" : "_self"}
+              rel={link.external ? "noopener noreferrer" : undefined}
+              class="inline-flex px-3 py-2 font-mono text-sm text-center transition-colors border rounded-full border-neutral-800 text-neutral-400 hover:bg-neutral-800/40 hover:text-neutral-300"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
 </Layout>

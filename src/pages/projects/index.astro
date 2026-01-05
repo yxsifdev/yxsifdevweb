@@ -1,0 +1,78 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+const projects = (
+  await getCollection("projects", ({ data }) => {
+    return data.draft !== true;
+  })
+).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const options: Intl.DateTimeFormatOptions = {
+  timeZone: "UTC",
+  day: "2-digit",
+  month: "short",
+  year: "numeric",
+};
+---
+
+<Layout>
+  <h1 class="mb-4 text-5xl font-medium">Proyectos</h1>
+  <ul
+    class="grid gap-x-5 gap-y-10 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+  >
+    {
+      projects.map(
+        ({
+          slug,
+          data: { title, description, pubDate, cover, collaborators },
+        }) => (
+          <li>
+            <article class="h-full">
+              <a
+                href={`/projects/${slug}`}
+                class="flex flex-col h-full gap-y-2"
+              >
+                {cover ? (
+                  <img
+                    src={cover}
+                    alt={`Cover image for ${title}`}
+                    class="object-cover w-full rounded-md h-60"
+                  />
+                ) : (
+                  <div class="w-full rounded-md h-60 bg-linear-to-tl from-sky-400 to-blue-500" />
+                )}
+                <div>
+                  <h2>{title}</h2>
+                  <p class="text-sm text-neutral-400 line-clamp-1">
+                    {description}
+                  </p>
+                  <div class="flex items-center justify-between mt-2">
+                    <time
+                      datetime={pubDate.toISOString()}
+                      class="text-sm text-neutral-500 text-nowrap"
+                    >
+                      {pubDate.toLocaleDateString("es-ES", options)}
+                    </time>
+                    <div class="flex items-center -space-x-3 rtl:space-x-reverse group">
+                      {collaborators &&
+                        collaborators.length > 0 &&
+                        collaborators.map((co) => (
+                          <img
+                            src={`https://github.com/${co.name}.png`}
+                            alt={`Collaborator ${co.name}`}
+                            class="rounded-full size-8"
+                            title={co.name}
+                          />
+                        ))}
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </article>
+          </li>
+        )
+      )
+    }
+  </ul>
+</Layout>
